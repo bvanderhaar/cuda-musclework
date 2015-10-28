@@ -3,10 +3,21 @@
 #include <iostream>
 
 int main(int argc, char *argv[]) {
-  int vertices = 0, i = 0, j = 0, k = 0;
+  int num_vectors = 0, force[], distance[], i, j;
   if (argc < 2) {
-    std::cout << "Usage: floyds-algorithm num_vertices [-t]" << std::endl;
+    std::cout << "Usage: cuda-musclework num_vectors" << std::endl;
   }
 
-  vertices = atoi(argv[1]);
+  num_vectors = atoi(argv[1]);
+
+  // go up
+  for (i = 0; i < num_vectors; i++) {
+    force[i] = i;
+  }
+
+  // back down
+  for (j = num_vectors; j < 0 ; j--) {
+    force[j] = i - j;
+  }
+
 }
