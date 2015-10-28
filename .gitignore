@@ -26,3 +26,7 @@
 *.exe
 *.out
 *.app
+cuda-musclework
+
+# Mac OS X
+.DS_Store
