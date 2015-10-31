@@ -12,7 +12,7 @@
  * an executable kernel on the CUDA device.
  * All kernesl must be declared with a return type void
  */
-__global__ void cu_fillArray(int *block_d, int *thread_d) {
+__global__ void cu_dotProduct(int *block_d, int *thread_d) {
   int x;
   /* blockIdx.x is a built-in variable in CUDA
      that returns the blockId in the x axis.
