@@ -2,7 +2,7 @@
  * compile both driver code and kernel code with nvcc, as in:
  * 			nvcc simple.c simple.cu
  */
-
+#include <stdlib.h>
 #include <stdio.h>
 #include <vector>
 #include <string>
