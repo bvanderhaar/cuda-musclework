@@ -37,19 +37,19 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
   cudaError_t result;
 
   // allocate space in the device
-  result = cudaMalloc((void **)&distance_array_d, sizeof(int) * num_vertices);
+  result = cudaMalloc((void **)&distance_array_d, sizeof(int) * num_vectors);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMalloc failed.");
     exit(1);
   }
 
-  result = cudaMalloc((void **)&force_array_d, sizeof(int) * num_vertices);
+  result = cudaMalloc((void **)&force_array_d, sizeof(int) * num_vectors);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMalloc failed.");
     exit(1);
   }
 
-  result = cudaMalloc((void **)&result_array_d, sizeof(int) * num_vertices);
+  result = cudaMalloc((void **)&result_array_d, sizeof(int) * num_vectors);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMalloc failed.");
     exit(1);
@@ -63,14 +63,14 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
     exit(1);
   }
 
-  result = cudaMemcpy(force_array_d, force_array, sizeof(int) * num_vertices,
+  result = cudaMemcpy(force_array_d, force_array, sizeof(int) * num_vectors,
                       cudaMemcpyHostToDevice);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMemcpy failed.");
     exit(1);
   }
 
-  result = cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vertices,
+  result = cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vectors,
                       cudaMemcpyHostToDevice);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMemcpy failed.");
@@ -85,7 +85,7 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
   cu_dotProduct<<<dimgrid, dimblock>>>(result_array_d);
 
   // transfer results back to host
-  result = cudaMemcpy(result_array, result_array_d, sizeof(int) * arraySize,
+  result = cudaMemcpy(result_array, result_array_d, sizeof(int) * num_vectors,
                       cudaMemcpyDeviceToHost);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMemcpy failed.");
