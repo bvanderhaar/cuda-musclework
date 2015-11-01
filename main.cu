@@ -57,7 +57,7 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
 
   // copy the array from host to array_d in the device
   result = cudaMemcpy(distance_array_d, distance_array,
-                      sizeof(int) * num_vertices, cudaMemcpyHostToDevice);
+                      sizeof(int) * num_vectors, cudaMemcpyHostToDevice);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMemcpy failed.");
     exit(1);
