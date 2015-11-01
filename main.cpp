@@ -4,10 +4,13 @@
  */
 
 #include <stdio.h>
-#define SIZEOFARRAY 64
+#include <vector>
+#include <string>
+#include <iostream>
 
 // The function fillArray is in the file simple.cu
-extern void gpu_dotProduct(int *a, int size);
+extern void gpu_dotProduct(int *distance_array, int *force_array,
+                           int num_vectors);
 
 std::vector<int> gen_force_array(int num_vectors) {
   int i, j, half_vectors;
@@ -43,29 +46,24 @@ std::vector<int> gen_distance_array(int num_vectors) {
 }
 
 int main(int argc, char *argv[]) {
-  // Declare the array and initialize to 0
-  int a[SIZEOFARRAY];
-  int i;
-  for (i = 0; i < SIZEOFARRAY; i++) {
-    a[i] = 0;
+  int num_vectors = 0, half_vectors, i, j, s_dotproduct = 0,
+      pu_dotproduct_result = 0, temp;
+  if (argc < 2) {
+    std::cout << "Usage: cuda-musclework num_vectors" << std::endl;
   }
+  num_vectors = atoi(argv[1]);
+  std::cout << "Using num_vectors: " << num_vectors << std::endl;
+  std::vector<int> distance;
+  std::vector<int> force;
 
-  // Print the initial array
-  printf("Initial state of the array:\n");
-  for (i = 0; i < SIZEOFARRAY; i++) {
-    printf("%d ", a[i]);
-  }
-  printf("\n");
+  distance.resize(num_vectors, 0);
+  force.resize(num_vectors, 0);
+
+  distance = gen_distance_array(num_vectors);
+  force = gen_force_array(num_vectors);
 
   // Call the function that will call the GPU function
-  fillArray(a, SIZEOFARRAY);
-
-  // Again, print the array
-  printf("Final state of the array:\n");
-  for (i = 0; i < SIZEOFARRAY; i++) {
-    printf("%d ", a[i]);
-  }
-  printf("\n");
+  gpu_dotProduct(distance, force, num_vectors);
 
   return 0;
 }

@@ -27,20 +27,50 @@ __global__ void cu_dotProduct(int *block_d, int *thread_d) {
 }
 
 // Called from driver program.  Handles running GPU calculation
-extern "C" void gpu_dotProduct(int *array, int arraySize) {
+extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
+                               int num_vectors) {
   // a_d is the GPU counterpart of the array that exists in host memory
-  int *array_d;
+  int *distance_array_d;
+  int *force_array_d;
+  int result_array[num_vertices];
+  int *result_array_d;
   cudaError_t result;
 
   // allocate space in the device
-  result = cudaMalloc((void **)&array_d, sizeof(int) * arraySize);
+  result = cudaMalloc((void **)&distance_array_d, sizeof(int) * num_vertices);
+  if (result != cudaSuccess) {
+    fprintf(stderr, "cudaMalloc failed.");
+    exit(1);
+  }
+
+  result = cudaMalloc((void **)&force_array_d, sizeof(int) * num_vertices);
+  if (result != cudaSuccess) {
+    fprintf(stderr, "cudaMalloc failed.");
+    exit(1);
+  }
+
+  result = cudaMalloc((void **)&result_array_d, sizeof(int) * num_vertices);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMalloc failed.");
     exit(1);
   }
 
   // copy the array from host to array_d in the device
-  result = cudaMemcpy(array_d, array, sizeof(int) * arraySize,
+  result = cudaMemcpy(distance_array_d, distance_array,
+                      sizeof(int) * num_vertices, cudaMemcpyHostToDevice);
+  if (result != cudaSuccess) {
+    fprintf(stderr, "cudaMemcpy failed.");
+    exit(1);
+  }
+
+  result = cudaMemcpy(force_array_d, force_array, sizeof(int) * num_vertices,
+                      cudaMemcpyHostToDevice);
+  if (result != cudaSuccess) {
+    fprintf(stderr, "cudaMemcpy failed.");
+    exit(1);
+  }
+
+  result = cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vertices,
                       cudaMemcpyHostToDevice);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMemcpy failed.");
@@ -49,13 +79,13 @@ extern "C" void gpu_dotProduct(int *array, int arraySize) {
 
   // set execution configuration
   dim3 dimblock(BLOCK_SIZE);
-  dim3 dimgrid(arraySize / BLOCK_SIZE);
+  dim3 dimgrid(num_vertices / BLOCK_SIZE);
 
   // actual computation: Call the kernel
-  cu_fillArray<<<dimgrid, dimblock>>>(array_d);
+  cu_dotProduct<<<dimgrid, dimblock>>>(result_array_d);
 
   // transfer results back to host
-  result = cudaMemcpy(array, array_d, sizeof(int) * arraySize,
+  result = cudaMemcpy(result_array, result_array_d, sizeof(int) * arraySize,
                       cudaMemcpyDeviceToHost);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaMemcpy failed.");
@@ -63,7 +93,21 @@ extern "C" void gpu_dotProduct(int *array, int arraySize) {
   }
 
   // release the memory on the GPU
-  result = cudaFree(array_d);
+  result = cudaFree(distance_array_d);
+  if (result != cudaSuccess) {
+    fprintf(stderr, "cudaFree failed.");
+    exit(1);
+  }
+
+  // release the memory on the GPU
+  result = cudaFree(force_array_d);
+  if (result != cudaSuccess) {
+    fprintf(stderr, "cudaFree failed.");
+    exit(1);
+  }
+
+  // release the memory on the GPU
+  result = cudaFree(result_array_d);
   if (result != cudaSuccess) {
     fprintf(stderr, "cudaFree failed.");
     exit(1);
