@@ -32,7 +32,7 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
   // a_d is the GPU counterpart of the array that exists in host memory
   int *distance_array_d;
   int *force_array_d;
-  int result_array[num_vertices];
+  int result_array[num_vectors];
   int *result_array_d;
   cudaError_t result;
 
