@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
   force = gen_force_array(num_vectors);
 
   // Call the function that will call the GPU function
-  gpu_dotProduct(distance, force, num_vectors);
+  gpu_dotProduct(&distance[0], &force[0], num_vectors);
 
   return 0;
 }
