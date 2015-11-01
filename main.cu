@@ -79,7 +79,7 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
 
   // set execution configuration
   dim3 dimblock(BLOCK_SIZE);
-  dim3 dimgrid(num_vertices / BLOCK_SIZE);
+  dim3 dimgrid(num_vectors / BLOCK_SIZE);
 
   // actual computation: Call the kernel
   cu_dotProduct<<<dimgrid, dimblock>>>(result_array_d);
