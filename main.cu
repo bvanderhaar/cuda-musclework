@@ -12,7 +12,8 @@
  * an executable kernel on the CUDA device.
  * All kernesl must be declared with a return type void
  */
-__global__ void cu_dotProduct(int *block_d, int *thread_d) {
+__global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
+                              int *result_array_d, int max) {
   int x;
   /* blockIdx.x is a built-in variable in CUDA
      that returns the blockId in the x axis.
@@ -22,94 +23,48 @@ __global__ void cu_dotProduct(int *block_d, int *thread_d) {
      stream processor accessing this particular block
   */
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
-  block_d[x] = blockIdx.x;
-  thread_d[x] = threadIdx.x;
+  if (x < max) {
+    result_array_d[x] = distance_array_d[x] * force_array_d[x];
+  }
 }
 
 // Called from driver program.  Handles running GPU calculation
 extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
-                               int num_vectors) {
-  // a_d is the GPU counterpart of the array that exists in host memory
+                               int *result_array int num_vectors) {
   int *distance_array_d;
   int *force_array_d;
   int result_array[num_vectors];
   int *result_array_d;
-  cudaError_t result;
 
   // allocate space in the device
-  result = cudaMalloc((void **)&distance_array_d, sizeof(int) * num_vectors);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaMalloc failed.");
-    exit(1);
-  }
-
-  result = cudaMalloc((void **)&force_array_d, sizeof(int) * num_vectors);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaMalloc failed.");
-    exit(1);
-  }
-
-  result = cudaMalloc((void **)&result_array_d, sizeof(int) * num_vectors);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaMalloc failed.");
-    exit(1);
-  }
+  cudaMalloc((void **)&distance_array_d, sizeof(int) * num_vectors);
+  cudaMalloc((void **)&force_array_d, sizeof(int) * num_vectors);
+  cudaMalloc((void **)&result_array_d, sizeof(int) * num_vectors);
 
   // copy the array from host to array_d in the device
-  result = cudaMemcpy(distance_array_d, distance_array,
-                      sizeof(int) * num_vectors, cudaMemcpyHostToDevice);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaMemcpy failed.");
-    exit(1);
-  }
+  cudaMemcpy(distance_array_d, distance_array, sizeof(int) * num_vectors,
+             cudaMemcpyHostToDevice);
 
-  result = cudaMemcpy(force_array_d, force_array, sizeof(int) * num_vectors,
-                      cudaMemcpyHostToDevice);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaMemcpy failed.");
-    exit(1);
-  }
+  cudaMemcpy(force_array_d, force_array, sizeof(int) * num_vectors,
+             cudaMemcpyHostToDevice);
 
-  result = cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vectors,
-                      cudaMemcpyHostToDevice);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaMemcpy failed.");
-    exit(1);
-  }
+  cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vectors,
+             cudaMemcpyHostToDevice);
 
   // set execution configuration
   dim3 dimblock(BLOCK_SIZE);
-  dim3 dimgrid(num_vectors / BLOCK_SIZE);
+  dim3 dimgrid(ceil((double)num_vectors / BLOCK_SIZE));
 
   // actual computation: Call the kernel
-  cu_dotProduct<<<dimgrid, dimblock>>>(result_array_d);
+  cu_dotProduct<<<dimgrid, dimblock>>>(distance_array_d, force_array_d,
+                                       result_array_d, num_vectors);
 
   // transfer results back to host
-  result = cudaMemcpy(result_array, result_array_d, sizeof(int) * num_vectors,
-                      cudaMemcpyDeviceToHost);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaMemcpy failed.");
-    exit(1);
-  }
+  cudaMemcpy(result_array, result_array_d, sizeof(int) * num_vectors,
+             cudaMemcpyDeviceToHost);
 
   // release the memory on the GPU
-  result = cudaFree(distance_array_d);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaFree failed.");
-    exit(1);
-  }
-
-  // release the memory on the GPU
-  result = cudaFree(force_array_d);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaFree failed.");
-    exit(1);
-  }
-
-  // release the memory on the GPU
-  result = cudaFree(result_array_d);
-  if (result != cudaSuccess) {
-    fprintf(stderr, "cudaFree failed.");
-    exit(1);
-  }
+  cudaFree(distance_array_d);
+  cudaFree(force_array_d);
+  cudaFree(result_array_d);
 }

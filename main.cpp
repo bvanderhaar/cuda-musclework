@@ -55,15 +55,23 @@ int main(int argc, char *argv[]) {
   std::cout << "Using num_vectors: " << num_vectors << std::endl;
   std::vector<int> distance;
   std::vector<int> force;
+  std::vector<int> result;
 
   distance.resize(num_vectors, 0);
   force.resize(num_vectors, 0);
+  result.resize(num_vectors, 0);
 
   distance = gen_distance_array(num_vectors);
   force = gen_force_array(num_vectors);
 
   // Call the function that will call the GPU function
-  gpu_dotProduct(&distance[0], &force[0], num_vectors);
+  gpu_dotProduct(&distance[0], &force[0], &result, num_vectors);
+
+  for (i = 0; i < num_vectors; i++) {
+    pu_dotproduct_result = pu_dotproduct_result + result[i];
+  }
+
+  std::cout << "GPU Calc Total: " << pu_dotproduct_result << std::endl;
 
   return 0;
 }
