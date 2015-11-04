@@ -12,7 +12,7 @@
 extern void gpu_dotProduct(int *distance_array, int *force_array,
                            int *result_array, int num_vectors);
 
-std::vector<int> gen_force_array(int *force, int num_vectors) {
+void gen_force_array(int *force, int num_vectors) {
   int i, j, half_vectors;
   half_vectors = num_vectors / 2;
   // go up
@@ -27,7 +27,7 @@ std::vector<int> gen_force_array(int *force, int num_vectors) {
     i++;
   }
 
-  return force_array;
+  return;
 }
 
 void gen_distance_array(int *distance, int num_vectors) {
@@ -39,7 +39,7 @@ void gen_distance_array(int *distance, int num_vectors) {
       j = 1;
     }
   }
-  return 0;
+  return;
 }
 
 int main(int argc, char *argv[]) {
