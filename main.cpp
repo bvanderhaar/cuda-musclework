@@ -9,8 +9,8 @@
 #include <iostream>
 
 // The function fillArray is in the file simple.cu
-extern void gpu_dotProduct(int *distance_array, int *force_array,
-                           int *result_array, int num_vectors);
+extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
+                               int *result_array, int num_vectors);
 
 void gen_force_array(int *force, int num_vectors) {
   int i, j, half_vectors;
