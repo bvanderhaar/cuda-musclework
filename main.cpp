@@ -10,39 +10,36 @@
 
 // The function fillArray is in the file simple.cu
 extern void gpu_dotProduct(int *distance_array, int *force_array,
-                               int *result_array, int num_vectors);
+                           int *result_array, int num_vectors);
 
-std::vector<int> gen_force_array(int num_vectors) {
+std::vector<int> gen_force_array(int *force, int num_vectors) {
   int i, j, half_vectors;
   half_vectors = num_vectors / 2;
-  std::vector<int> force_array(num_vectors);
-
   // go up
   for (i = 0; i < half_vectors; i++) {
-    force_array[i] = i + 1;
+    force[i] = i + 1;
   }
 
   // walk backwards with array, forward counting
   i = 1;
   for (j = num_vectors; j > half_vectors; j--) {
-    force_array[j - 1] = i;
+    force[j - 1] = i;
     i++;
   }
 
   return force_array;
 }
 
-std::vector<int> gen_distance_array(int num_vectors) {
+void gen_distance_array(int *distance, int num_vectors) {
   int i = 0, j = 1;
-  std::vector<int> distance_array(num_vectors);
   for (i = 0; i < num_vectors; i++) {
-    distance_array[i] = j;
+    distance[i] = j;
     j++;
     if (j > 10) {
       j = 1;
     }
   }
-  return distance_array;
+  return 0;
 }
 
 int main(int argc, char *argv[]) {
@@ -53,15 +50,15 @@ int main(int argc, char *argv[]) {
   }
   num_vectors = atoi(argv[1]);
   std::cout << "Using num_vectors: " << num_vectors << std::endl;
-  std::vector<int> distance(num_vectors);
-  std::vector<int> force(num_vectors);
-  std::vector<int> result(num_vectors);
+  int *distance = (int *)malloc(num_vectors * sizeof(int));
+  int *force = (int *)malloc(num_vectors * sizeof(int));
+  int *result = (int *)malloc(num_vectors * sizeof(int));
 
-  distance = gen_distance_array(num_vectors);
-  force = gen_force_array(num_vectors);
+  gen_distance_array(distance, num_vectors);
+  gen_force_array(force, num_vectors);
 
   // Call the function that will call the GPU function
-  gpu_dotProduct(&distance[0], &force[0], &result[0], num_vectors);
+  gpu_dotProduct(distance, force, result, num_vectors);
 
   for (i = 0; i < num_vectors; i++) {
     pu_dotproduct_result = pu_dotproduct_result + result[i];
