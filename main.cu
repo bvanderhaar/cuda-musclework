@@ -30,7 +30,7 @@ __global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
 
 // Called from driver program.  Handles running GPU calculation
 extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
-                               int *result_array int num_vectors) {
+                               int *result_array, int num_vectors) {
   int *distance_array_d;
   int *force_array_d;
   int *result_array_d;
