@@ -8,7 +8,7 @@
 #define BLOCK_SIZE 8
 
 __global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
-                              int *result_array_d, int max) {
+                              long long *result_array_d, int max) {
   int x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   if (x < max) {
