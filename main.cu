@@ -37,7 +37,7 @@ __global__ void cu_gen_distance_array(int *distance_array_d, int max) {
 }
 
 // Called from driver program.  Handles running GPU calculation
-extern "C" void gpu_dotProduct(int *result_array, int num_vectors) {
+extern "C" void gpu_dotProduct(long long *result_array, int num_vectors) {
   int *distance_array_d;
   int *force_array_d;
   int *result_array_d;
@@ -45,9 +45,9 @@ extern "C" void gpu_dotProduct(int *result_array, int num_vectors) {
   // allocate space in the device
   cudaMalloc((void **)&distance_array_d, sizeof(int) * num_vectors);
   cudaMalloc((void **)&force_array_d, sizeof(int) * num_vectors);
-  cudaMalloc((void **)&result_array_d, sizeof(int) * num_vectors);
+  cudaMalloc((void **)&result_array_d, sizeof(long long) * num_vectors);
 
-  cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vectors,
+  cudaMemcpy(result_array_d, result_array, sizeof(long long) * num_vectors,
              cudaMemcpyHostToDevice);
 
   // set execution configuration
@@ -60,7 +60,7 @@ extern "C" void gpu_dotProduct(int *result_array, int num_vectors) {
                                        result_array_d, num_vectors);
 
   // transfer results back to host
-  cudaMemcpy(result_array, result_array_d, sizeof(int) * num_vectors,
+  cudaMemcpy(result_array, result_array_d, sizeof(long long) * num_vectors,
              cudaMemcpyDeviceToHost);
 
   // release the memory on the GPU

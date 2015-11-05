@@ -41,7 +41,8 @@ void printarray(std::vector<int> array, int size) {
 }
 
 int main(int argc, char *argv[]) {
-  int num_vectors = 0, half_vectors, i, j, s_dotproduct = 0, temp;
+  int num_vectors = 0, half_vectors, i, j, temp;
+  long long s_dotproduct = 0;
   if (argc < 2) {
     std::cout << "Usage: cuda-musclework num_vectors" << std::endl;
   }
