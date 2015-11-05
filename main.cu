@@ -14,9 +14,8 @@ __global__ void cu_dotProduct(long long *distance_array_d,
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   if (x < max) {
     result_array_d[x] = distance_array_d[x] * force_array_d[x];
-  } else {
-    __syncthreads();
   }
+  __syncthreads();
 }
 
 __global__ void cu_gen_force_array(long long *force_array_d, long long max) {
