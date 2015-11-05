@@ -27,6 +27,7 @@ __global__ void cu_gen_force_array(long long *force_array_d, long long max) {
   } else {
     force_array_d[x] = half_vectors + (half_vectors - x);
   }
+  __syncthreads();
 }
 
 __global__ void cu_gen_distance_array(long long *distance_array_d,
@@ -37,6 +38,7 @@ __global__ void cu_gen_distance_array(long long *distance_array_d,
   if (distance_array_d[x] == 0) {
     distance_array_d[x] = 10;
   }
+  __syncthreads();
 }
 
 // Called from driver program.  Handles running GPU calculation
