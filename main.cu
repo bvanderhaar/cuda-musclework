@@ -47,13 +47,6 @@ extern "C" void gpu_dotProduct(int *result_array, int num_vectors) {
   cudaMalloc((void **)&force_array_d, sizeof(int) * num_vectors);
   cudaMalloc((void **)&result_array_d, sizeof(int) * num_vectors);
 
-  // copy the array from host to array_d in the device
-  /*cudaMemcpy(distance_array_d, distance_array, sizeof(int) * num_vectors,
-             cudaMemcpyHostToDevice);
-
-  cudaMemcpy(force_array_d, force_array, sizeof(int) * num_vectors,
-             cudaMemcpyHostToDevice);*/
-
   cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vectors,
              cudaMemcpyHostToDevice);
 
