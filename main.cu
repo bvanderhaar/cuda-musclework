@@ -14,6 +14,8 @@ __global__ void cu_dotProduct(long long *distance_array_d,
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   if (x < max) {
     result_array_d[x] = distance_array_d[x] * force_array_d[x];
+  } else {
+    __syncthreads();
   }
 }
 
@@ -57,12 +59,10 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   dim3 dimgrid(ceil((double)num_vectors / BLOCK_SIZE));
 
   cu_gen_force_array<<<dimgrid, dimblock>>>(force_array_d, num_vectors);
-  __syncthreads();
   cu_gen_distance_array<<<dimgrid, dimblock>>>(distance_array_d, num_vectors);
-  __syncthreads();
   cu_dotProduct<<<dimgrid, dimblock>>>(distance_array_d, force_array_d,
                                        result_array_d, num_vectors);
-  __syncthreads();
+
   cudaError_t err = cudaGetLastError();
   if (err != cudaSuccess) {
     printf("CUDA errors: %s\n", cudaGetErrorString(err));
@@ -70,7 +70,6 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   // transfer results back to host
   cudaMemcpy(result_array, result_array_d, sizeof(long long) * num_vectors,
              cudaMemcpyDeviceToHost);
-  __syncthreads();
   // release the memory on the GPU
   cudaFree(distance_array_d);
   cudaFree(force_array_d);
