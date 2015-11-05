@@ -7,7 +7,7 @@
  */
 #define BLOCK_SIZE 32
 
-__global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
+__global__ void cu_dotProduct(long long *distance_array_d, long long *force_array_d,
                               long long *result_array_d, int max) {
   long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
@@ -16,7 +16,7 @@ __global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
   }
 }
 
-__global__ void cu_gen_force_array(int *force_array_d, int max) {
+__global__ void cu_gen_force_array(long long *force_array_d, int max) {
   int x, half_vectors;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   half_vectors = max / 2;
@@ -27,7 +27,7 @@ __global__ void cu_gen_force_array(int *force_array_d, int max) {
   }
 }
 
-__global__ void cu_gen_distance_array(int *distance_array_d, int max) {
+__global__ void cu_gen_distance_array(long long *distance_array_d, int max) {
   int x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   distance_array_d[x] = (x + 1) % 10;
@@ -38,13 +38,13 @@ __global__ void cu_gen_distance_array(int *distance_array_d, int max) {
 
 // Called from driver program.  Handles running GPU calculation
 extern "C" void gpu_dotProduct(long long *result_array, int num_vectors) {
-  int *distance_array_d;
-  int *force_array_d;
+  long long *distance_array_d;
+  long long *force_array_d;
   long long *result_array_d;
 
   // allocate space in the device
-  cudaMalloc((void **)&distance_array_d, sizeof(int) * num_vectors);
-  cudaMalloc((void **)&force_array_d, sizeof(int) * num_vectors);
+  cudaMalloc((void **)&distance_array_d, sizeof(long long) * num_vectors);
+  cudaMalloc((void **)&force_array_d, sizeof(long long) * num_vectors);
   cudaMalloc((void **)&result_array_d, sizeof(long long) * num_vectors);
 
   cudaMemcpy(result_array_d, result_array, sizeof(long long) * num_vectors,
