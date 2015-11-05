@@ -9,8 +9,7 @@
 #include <iostream>
 
 // The function fillArray is in the file simple.cu
-extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
-                               int *result_array, int num_vectors);
+extern "C" void gpu_dotProduct(int *result_array, int num_vectors);
 
 void gen_force_array(int *force, int num_vectors) {
   int i, j, half_vectors;
@@ -50,15 +49,10 @@ int main(int argc, char *argv[]) {
   }
   num_vectors = atoi(argv[1]);
   std::cout << "Using num_vectors: " << num_vectors << std::endl;
-  int *distance = (int *)malloc(num_vectors * sizeof(int));
-  int *force = (int *)malloc(num_vectors * sizeof(int));
   int *result = (int *)malloc(num_vectors * sizeof(int));
 
-  gen_distance_array(distance, num_vectors);
-  gen_force_array(force, num_vectors);
-
   // Call the function that will call the GPU function
-  gpu_dotProduct(distance, force, result, num_vectors);
+  gpu_dotProduct(result, num_vectors);
 
   for (i = 0; i < num_vectors; i++) {
     pu_dotproduct_result = pu_dotproduct_result + result[i];

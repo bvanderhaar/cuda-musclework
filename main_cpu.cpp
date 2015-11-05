@@ -21,13 +21,12 @@ void pu_dotproduct(int start, int end, int id) {
 }
 
 std::vector<int> gen_distance_array(int num_vectors) {
-  int i = 0, j = 1;
+  int i = 0;
   std::vector<int> distance_array(num_vectors);
   for (i = 0; i < num_vectors; i++) {
-    distance_array[i] = j;
-    j++;
-    if (j > 10) {
-      j = 1;
+    distance_array[i] = (i + 1) % 10;
+    if (distance_array[i] == 0) {
+      distance_array[i] = 10;
     }
   }
   return distance_array;
@@ -38,16 +37,12 @@ std::vector<int> gen_force_array(int num_vectors) {
   half_vectors = num_vectors / 2;
   std::vector<int> force_array(num_vectors);
 
-  // go up
-  for (i = 0; i < half_vectors; i++) {
-    force_array[i] = i + 1;
-  }
-
-  // walk backwards with array, forward counting
-  i = 1;
-  for (j = num_vectors; j > half_vectors; j--) {
-    force_array[j - 1] = i;
-    i++;
+  for (i = 0; i < num_vectors; i++) {
+    if (i < half_vectors) {
+      force_array[i] = i + 1;
+    } else {
+      force_array[i] = half_vectors + (half_vectors - i);
+    }
   }
 
   return force_array;

@@ -6,33 +6,38 @@
  * The grid of data that will be worked on is divided into blocks
  */
 #define BLOCK_SIZE 8
-/**
- * The function that will be executed in each stream processors
- * The __global__ directive identifies this function as being
- * an executable kernel on the CUDA device.
- * All kernesl must be declared with a return type void
- */
+
 __global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
                               int *result_array_d, int max) {
   int x;
-  /* blockIdx.x is a built-in variable in CUDA
-     that returns the blockId in the x axis.
-     threadIdx.x is another built-in variable in CUDA
-     that returns the threadId in the x axis
-     of the thread that is being executed by the
-     stream processor accessing this particular block
-  */
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   if (x < max) {
     result_array_d[x] = distance_array_d[x] * force_array_d[x];
   }
 }
 
+__global__ void cu_gen_force_array(int *force_array_d, int max) {
+  int x, half_vectors;
+  x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
+  half_vectors = max / 2;
+  if (x < half_vectors) {
+    force_array_d[x] = i + 1;
+  } else {
+    force_array_d[x] = half_vectors + (half_vectors - x);
+  }
+}
+
+__global__ void cu_gen_distance_array(int *distance_array_d, int max) {
+  int x;
+  x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
+  distance_array_d[x] = (i + 1) % 10;
+  if (distance_array_d[x] == 0) {
+    distance_array_d[x] = 10;
+  }
+}
+
 // Called from driver program.  Handles running GPU calculation
-extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
-                               int *result_array, int num_vectors) {
-  int *distance_array_d;
-  int *force_array_d;
+extern "C" void gpu_dotProduct(int *result_array, int num_vectors) {
   int *result_array_d;
 
   // allocate space in the device
@@ -41,11 +46,11 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
   cudaMalloc((void **)&result_array_d, sizeof(int) * num_vectors);
 
   // copy the array from host to array_d in the device
-  cudaMemcpy(distance_array_d, distance_array, sizeof(int) * num_vectors,
+  /*cudaMemcpy(distance_array_d, distance_array, sizeof(int) * num_vectors,
              cudaMemcpyHostToDevice);
 
   cudaMemcpy(force_array_d, force_array, sizeof(int) * num_vectors,
-             cudaMemcpyHostToDevice);
+             cudaMemcpyHostToDevice);*/
 
   cudaMemcpy(result_array_d, result_array, sizeof(int) * num_vectors,
              cudaMemcpyHostToDevice);
@@ -54,7 +59,8 @@ extern "C" void gpu_dotProduct(int *distance_array, int *force_array,
   dim3 dimblock(BLOCK_SIZE);
   dim3 dimgrid(ceil((double)num_vectors / BLOCK_SIZE));
 
-  // actual computation: Call the kernel
+  cu_gen_force_array<<<dimgrid, dimblock>>>(force_array_d, num_vectors);
+  cu_gen_distance_array<<<dimgrid, dimblock>>>(distance_array_d, num_vectors);
   cu_dotProduct<<<dimgrid, dimblock>>>(distance_array_d, force_array_d,
                                        result_array_d, num_vectors);
 
