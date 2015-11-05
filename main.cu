@@ -5,7 +5,7 @@
  * In CUDA it is necessary to define block sizes
  * The grid of data that will be worked on is divided into blocks
  */
-#define BLOCK_SIZE 8
+#define BLOCK_SIZE 32
 
 __global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
                               long long *result_array_d, int max) {
