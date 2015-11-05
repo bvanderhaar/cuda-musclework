@@ -12,33 +12,36 @@ __global__ void cu_dotProduct(long long *distance_array_d,
                               long long *result_array_d, long long max) {
   long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
+  __syncthreads();
   if (x < max) {
     result_array_d[x] = distance_array_d[x] * force_array_d[x];
   }
-  __syncthreads();
+
 }
 
 __global__ void cu_gen_force_array(long long *force_array_d, long long max) {
   long long x, half_vectors;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   half_vectors = max / 2;
+  __syncthreads();
   if (x < half_vectors) {
     force_array_d[x] = x + 1;
   } else {
     force_array_d[x] = half_vectors + (half_vectors - x);
   }
-  __syncthreads();
+
 }
 
 __global__ void cu_gen_distance_array(long long *distance_array_d,
                                       long long max) {
   long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
+  __syncthreads();
   distance_array_d[x] = (x + 1) % 10;
   if (distance_array_d[x] == 0) {
     distance_array_d[x] = 10;
   }
-  __syncthreads();
+
 }
 
 // Called from driver program.  Handles running GPU calculation
