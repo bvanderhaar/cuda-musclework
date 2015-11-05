@@ -9,7 +9,7 @@
 
 __global__ void cu_dotProduct(int *distance_array_d, int *force_array_d,
                               long long *result_array_d, int max) {
-  int x;
+  long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   if (x < max) {
     result_array_d[x] = distance_array_d[x] * force_array_d[x];
