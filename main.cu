@@ -38,6 +38,8 @@ __global__ void cu_gen_distance_array(int *distance_array_d, int max) {
 
 // Called from driver program.  Handles running GPU calculation
 extern "C" void gpu_dotProduct(int *result_array, int num_vectors) {
+  int *distance_array_d;
+  int *force_array_d;
   int *result_array_d;
 
   // allocate space in the device
