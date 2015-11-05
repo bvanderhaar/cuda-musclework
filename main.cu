@@ -8,7 +8,7 @@
 #define BLOCK_SIZE 32
 
 __global__ void cu_dotProduct(long long *distance_array_d, long long *force_array_d,
-                              long long *result_array_d, int max) {
+                              long long *result_array_d, long long max) {
   long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   if (x < max) {
@@ -16,8 +16,8 @@ __global__ void cu_dotProduct(long long *distance_array_d, long long *force_arra
   }
 }
 
-__global__ void cu_gen_force_array(long long *force_array_d, int max) {
-  int x, half_vectors;
+__global__ void cu_gen_force_array(long long *force_array_d, long long max) {
+  long long x, half_vectors;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   half_vectors = max / 2;
   if (x < half_vectors) {
@@ -27,8 +27,8 @@ __global__ void cu_gen_force_array(long long *force_array_d, int max) {
   }
 }
 
-__global__ void cu_gen_distance_array(long long *distance_array_d, int max) {
-  int x;
+__global__ void cu_gen_distance_array(long long *distance_array_d, long long max) {
+  long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   distance_array_d[x] = (x + 1) % 10;
   if (distance_array_d[x] == 0) {
@@ -37,7 +37,7 @@ __global__ void cu_gen_distance_array(long long *distance_array_d, int max) {
 }
 
 // Called from driver program.  Handles running GPU calculation
-extern "C" void gpu_dotProduct(long long *result_array, int num_vectors) {
+extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   long long *distance_array_d;
   long long *force_array_d;
   long long *result_array_d;

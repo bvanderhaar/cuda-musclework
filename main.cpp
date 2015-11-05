@@ -8,10 +8,10 @@
 #include <string>
 #include <iostream>
 
-extern "C" void gpu_dotProduct(long long *result_array, int num_vectors);
+extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors);
 
 int main(int argc, char *argv[]) {
-  int num_vectors = 0;
+  long long num_vectors = 0;
   long long pu_dotproduct_result = 0, i = 0;
   if (argc < 2) {
     std::cout << "Usage: cuda-musclework num_vectors" << std::endl;
