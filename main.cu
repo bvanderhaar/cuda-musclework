@@ -21,7 +21,7 @@ __global__ void cu_gen_force_array(int *force_array_d, int max) {
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   half_vectors = max / 2;
   if (x < half_vectors) {
-    force_array_d[x] = i + 1;
+    force_array_d[x] = x + 1;
   } else {
     force_array_d[x] = half_vectors + (half_vectors - x);
   }
@@ -30,7 +30,7 @@ __global__ void cu_gen_force_array(int *force_array_d, int max) {
 __global__ void cu_gen_distance_array(int *distance_array_d, int max) {
   int x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
-  distance_array_d[x] = (i + 1) % 10;
+  distance_array_d[x] = (x + 1) % 10;
   if (distance_array_d[x] == 0) {
     distance_array_d[x] = 10;
   }
