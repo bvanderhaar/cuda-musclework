@@ -60,7 +60,7 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
 
   // set execution configuration
   dim3 dimblock(BLOCK_SIZE);
-  dim3 dimgrid(ceil((double)num_vectors / BLOCK_SIZE));
+  dim3 dimgrid(ceil((long double)num_vectors / BLOCK_SIZE));
 
   cu_gen_force_array<<<dimgrid, dimblock>>>(force_array_d, num_vectors);
   cu_gen_distance_array<<<dimgrid, dimblock>>>(distance_array_d, num_vectors);
