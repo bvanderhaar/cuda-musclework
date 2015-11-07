@@ -12,36 +12,30 @@ __global__ void cu_dotProduct(long long *distance_array_d,
                               long long *result_array_d, long long max) {
   long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
-  __syncthreads();
   if (x < max) {
     result_array_d[x] = distance_array_d[x] * force_array_d[x];
   }
-
 }
 
 __global__ void cu_gen_force_array(long long *force_array_d, long long max) {
   long long x, half_vectors;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
   half_vectors = max / 2;
-  __syncthreads();
   if (x < half_vectors) {
     force_array_d[x] = x + 1;
   } else {
     force_array_d[x] = half_vectors + (half_vectors - x);
   }
-
 }
 
 __global__ void cu_gen_distance_array(long long *distance_array_d,
                                       long long max) {
   long long x;
   x = blockIdx.x * BLOCK_SIZE + threadIdx.x;
-  __syncthreads();
   distance_array_d[x] = (x + 1) % 10;
   if (distance_array_d[x] == 0) {
     distance_array_d[x] = 10;
   }
-
 }
 
 // Called from driver program.  Handles running GPU calculation
@@ -55,8 +49,8 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   cudaMalloc((void **)&force_array_d, sizeof(long long) * num_vectors);
   cudaMalloc((void **)&result_array_d, sizeof(long long) * num_vectors);
 
-  cudaMemcpy(result_array_d, result_array, sizeof(long long) * num_vectors,
-             cudaMemcpyHostToDevice);
+  //cudaMemcpy(result_array_d, result_array, sizeof(long long) * num_vectors,
+  //           cudaMemcpyHostToDevice);
 
   // set execution configuration
   dim3 dimblock(BLOCK_SIZE);
