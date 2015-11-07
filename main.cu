@@ -72,14 +72,14 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   dim3 dimgrid(ceil((long double)num_vectors / BLOCK_SIZE));
 
   cu_gen_force_array<<<dimgrid, dimblock>>>(force_array_d, num_vectors);
-  gpuErrchk(cudaPeekAtLastError());
-  gpuErrchk(cudaDeviceSynchronize());
+  //gpuErrchk(cudaPeekAtLastError());
+  //gpuErrchk(cudaDeviceSynchronize());
   cu_gen_distance_array<<<dimgrid, dimblock>>>(distance_array_d, num_vectors);
-  gpuErrchk(cudaPeekAtLastError());
-  gpuErrchk(cudaDeviceSynchronize());
+  //gpuErrchk(cudaPeekAtLastError());
+  //gpuErrchk(cudaDeviceSynchronize());
   cu_dotProduct<<<dimgrid, dimblock>>>(distance_array_d, force_array_d,
                                        result_array_d, num_vectors);
-  gpuErrchk(cudaPeekAtLastError());
+  //gpuErrchk(cudaPeekAtLastError());
   //gpuErrchk(cudaDeviceSynchronize());
 
   /*cudaError_t err = cudaGetLastError();
