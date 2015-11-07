@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
   if (argc < 2) {
     std::cout << "Usage: cuda-musclework num_vectors" << std::endl;
   }
-  num_vectors = atoi(argv[1]);
+  num_vectors = atoll(argv[1]);
   std::cout << "Using num_vectors: " << num_vectors << std::endl;
   long long *result = (long long *)malloc(num_vectors * sizeof(long long));
 
