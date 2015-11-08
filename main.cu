@@ -5,7 +5,7 @@
  * In CUDA it is necessary to define block sizes
  * The grid of data that will be worked on is divided into blocks
  */
-#define BLOCK_SIZE 64
+#define BLOCK_SIZE 1024
 
 #define gpuErrchk(ans)                                                         \
   { gpuAssert((ans), __FILE__, __LINE__); }
