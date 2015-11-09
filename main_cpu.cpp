@@ -62,13 +62,6 @@ int main(int argc, char *argv[]) {
   clock_t cpu_stop = clock();
   double elapsed_cpu = double(cpu_stop - cpu_start) / (CLOCKS_PER_SEC / 1000);
 
-  // print array
-  std::cout << "Force Array: \t\t";
-  printarray(GForce, num_vectors);
-  std::cout << std::endl << "Distance Array: \t";
-  printarray(GDistance, num_vectors);
-  std::cout << std::endl;
   std::cout << "CPU (serial) dot product: " << s_dotproduct << std::endl;
-  // std::cout << "Parallel dot product: " << pu_dotproduct_result << std::endl;
   std::cout << "CPU Time Taken (msec): " << elapsed_cpu << std::endl;
 }

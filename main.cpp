@@ -29,16 +29,12 @@ int main(int argc, char *argv[]) {
   // Call the function that will call the GPU function
   clock_t gpu_start = clock();
   gpu_dotProduct(result, num_vectors);
-  clock_t gpu_stop = clock();
-  double elapsed_gpu = double(gpu_stop - gpu_start) / (CLOCKS_PER_SEC / 1000);
-
   for (i = 0; i < num_vectors; i++) {
     pu_dotproduct_result = pu_dotproduct_result + result[i];
   }
+  clock_t gpu_stop = clock();
+  double elapsed_gpu = double(gpu_stop - gpu_start) / (CLOCKS_PER_SEC / 1000);
 
-  std::cout << "Result array: ";
-  printarray(result, num_vectors);
-  std::cout << std::endl;
   std::cout << "GPU Calc Total: " << pu_dotproduct_result << std::endl;
   std::cout << "GPU Time Taken (msec): " << elapsed_gpu << std::endl;
 

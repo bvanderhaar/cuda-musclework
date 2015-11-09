@@ -56,9 +56,6 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   long long *force_array_d;
   long long *result_array_d;
 
-  long long *force_array;
-  long long *distance_array;
-
   // allocate space in the device
   cudaMalloc((void **)&distance_array_d, sizeof(long long) * num_vectors);
   cudaMalloc((void **)&force_array_d, sizeof(long long) * num_vectors);
@@ -69,7 +66,6 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   dim3 dimgrid(ceil((long double)num_vectors / BLOCK_SIZE));
 
   cu_gen_force_array<<<dimgrid, dimblock>>>(force_array_d, num_vectors);
-  gpuErrchk(cudaPeekAtLastError());
   cu_gen_distance_array<<<dimgrid, dimblock>>>(distance_array_d, num_vectors);
   cu_dotProduct<<<dimgrid, dimblock>>>(distance_array_d, force_array_d,
                                        result_array_d, num_vectors);
