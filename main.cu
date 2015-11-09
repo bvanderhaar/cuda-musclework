@@ -5,7 +5,7 @@
  * In CUDA it is necessary to define block sizes
  * The grid of data that will be worked on is divided into blocks
  */
-#define BLOCK_SIZE 1024
+#define BLOCK_SIZE 32
 
 #define gpuErrchk(ans)                                                         \
   { gpuAssert((ans), __FILE__, __LINE__); }
@@ -56,6 +56,9 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   long long *force_array_d;
   long long *result_array_d;
 
+  long long *force_array;
+  long long *distance_array;
+
   // allocate space in the device
   cudaMalloc((void **)&distance_array_d, sizeof(long long) * num_vectors);
   cudaMalloc((void **)&force_array_d, sizeof(long long) * num_vectors);
@@ -73,6 +76,7 @@ extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors) {
   // transfer results back to host
   cudaMemcpy(result_array, result_array_d, sizeof(long long) * num_vectors,
              cudaMemcpyDeviceToHost);
+
   // release the memory on the GPU
   cudaFree(distance_array_d);
   cudaFree(force_array_d);
