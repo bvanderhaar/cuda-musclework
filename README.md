@@ -12,10 +12,10 @@ For the serial program, Clang/LLVM 3.6 is used with level 2 compiler optimizatio
 ## Testing Methodology
 A Macbook Pro with a Core i5 at 2.7GHz and 8GB RAM is used for the serial program.  GVSU's Seawolf with a Tesla K40c is used for the GPU version of the program.
 Raw data results:
-
+![Raw Data](https://raw.githubusercontent.com/bvanderhaar/cuda-musclework/master/raw-data.png)
 
 Graph:
-
+![Graph](https://raw.githubusercontent.com/bvanderhaar/cuda-musclework/master/graph.png)
 
 ## Discussion
-The serial program with compiler operation does well until the number of vertices get above 2 million.  Parallel speedup heavily depends on the amount of data.
+The serial program with compiler operation does well until the number of vertices get above 2 million.  Parallel speedup heavily depends on the amount of data given.
