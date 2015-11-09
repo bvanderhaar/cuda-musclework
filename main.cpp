@@ -10,6 +10,12 @@
 
 extern "C" void gpu_dotProduct(long long *result_array, long long num_vectors);
 
+void printarray(long long *array, int size) {
+  for (int i = 0; i < size; i++) {
+    std::cout << array[i] << " ";
+  }
+}
+
 int main(int argc, char *argv[]) {
   long long num_vectors = 0;
   long long pu_dotproduct_result = 0, i = 0;
@@ -30,6 +36,9 @@ int main(int argc, char *argv[]) {
     pu_dotproduct_result = pu_dotproduct_result + result[i];
   }
 
+  std::cout << "Result array: ";
+  printarray(result, num_vectors);
+  std::cout << std::endl;
   std::cout << "GPU Calc Total: " << pu_dotproduct_result << std::endl;
   std::cout << "GPU Time Taken (msec): " << elapsed_gpu << std::endl;
 
