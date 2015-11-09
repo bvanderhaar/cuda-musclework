@@ -7,7 +7,7 @@ In the parallel program, three arrays are created.  Force and distance arrays ar
 When the result array is complete, addition of the final sum is performed serially.
 
 ## Implementation
-For the serial program, Clang/LLVM 3.6 is used with level 2 compiler optimizations enabled. The parallel GPU program is compiled with Nvidia's CUDA compiler driver V7.5 that wraps gcc.
+For the serial program, Clang/LLVM 3.6 is used with level 2 compiler optimizations enabled. The parallel GPU program is compiled with Nvidia's CUDA compiler driver V7.5 that wraps gcc.  The serial program and GPU program results were the same in every test.
 
 ## Testing Methodology
 A Macbook Pro with a Core i5 at 2.7GHz and 8GB RAM is used for the serial program.  GVSU's Seawolf with a Tesla K40c is used for the GPU version of the program.
