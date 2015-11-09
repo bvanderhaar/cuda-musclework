@@ -10,7 +10,12 @@ When the result array is complete, addition of the final sum is performed serial
 For the serial program, Clang/LLVM 3.6 is used with level 2 compiler optimizations enabled. The parallel GPU program is compiled with Nvidia's CUDA compiler driver V7.5 that wraps gcc.
 
 ## Testing Methodology
-A Macbook Pro with a Core i5 using the clock() C++ API is used for the serial program.  GVSU's Seawolf with a Tesla K40c is used for the GPU version of the program.
+A Macbook Pro with a Core i5 at 2.7GHz and 8GB RAM is used for the serial program.  GVSU's Seawolf with a Tesla K40c is used for the GPU version of the program.
+Raw data results:
+
+
+Graph:
 
 
 ## Discussion
+The serial program with compiler operation does well until the number of vertices get above 2 million.  Parallel speedup heavily depends on the amount of data.
